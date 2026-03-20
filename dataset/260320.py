@@ -16,6 +16,7 @@ import pybliometrics
 
 # Scopus API generation at https://dev.elsevier.com/
 # Use my API: ???
+# Use my API: 810f8e333bce1dee177bcf93d7c79051
 
 pybliometrics.scopus.init()
 
