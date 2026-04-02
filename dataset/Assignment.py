@@ -1,391 +1,709 @@
-#!/usr/bin/env python
-# coding: utf-8
+################################################################################################################
+########################################### XXX  ###########################################
+################################################################################################################
+
+
+################################################################################################################
+########################################### XXX  ###########################################
+################################################################################################################
+
+
+################################################################################################################
+########################################### 김민지 2026-04-02 15:57:59 ###########################################
+################################################################################################################
+from Bio import Entrez, SeqIO
+
+Entrez.email = "kmjkmj1113@naver.com"
+
+info_handle = Entrez.einfo(db="protein")
+info = Entrez.read(info_handle)
+info_handle.close()
+
+search_handle = Entrez.esearch(
+    db="protein",
+    term="Human papillomavirus[Organism] AND L1[Gene]",
+    retmax=5
+)
+search_result = Entrez.read(search_handle)
+search_handle.close()
+
+ids = search_result["IdList"]
+
+gb_handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="gb",
+    retmode="text"
+)
+genbank_data = list(SeqIO.parse(gb_handle, "genbank"))
+gb_handle.close()
+
+SeqIO.write(genbank_data, "HPV_L1.gb", "genbank")
+
+fasta_handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="fasta",
+    retmode="text"
+)
+fasta_data = list(SeqIO.parse(fasta_handle, "fasta"))
+fasta_handle.close()
+
+SeqIO.write(fasta_data, "HPV_L1.fasta", "fasta")
+
+print(ids)
+print("저장 완료")
+
+
+################################################################################################################
+########################################### 김민석 2026-04-02 15:03:23 ###########################################
+################################################################################################################
+# In[ ]:
+from Bio import Entrez
+from Bio import SeqIO
+Entrez.email = "kimmin020514@g.kmou.ac.kr"
+
+search_handle = Entrez.esearch(db="protein", term=search_term, retmax=5)
+
+search_results = Entrez.read(search_handle)
+search_handle.close()
+
+id_list = search_results["IdList"]
+print(id_list)
+
+
+# ln[ ]: (GenBank 포맷으로 가져오기)
+with Entrez.efetch(db="protein", id=id_list, rettype="gb", retmode="text") as handle:
+    gb_records = list(SeqIO.parse(handle, "genbank"))
+
+SeqIO.write(gb_records, "hpv_l1_5records.gb", "genbank")
+print("GenBank 파일 저장 완료: hpv_l1_5records.gb")
+
+print("\n[GenBank records]")
+for record in gb_records:
+    print(record.id, record.description)
+
+# ln[ ]: (FASTA 포맷으로 가져오기)
+with Entrez.efetch(db="protein", id=id_list, rettype="fasta", retmode="text") as handle:
+    fasta_records = list(SeqIO.parse(handle, "fasta"))
+
+SeqIO.write(fasta_records, "hpv_l1_5records.fasta", "fasta")
+print("FASTA 파일 저장 완료: hpv_l1_5records.fasta")
+
+print("\n[FASTA records]")
+for record in fasta_records:
+    print(">" + record.id)
+    print(record.seq)
+
+
+################################################################################################################
+########################################### 황소연 2026-04-02 13:11:07 ###########################################
+################################################################################################################
+#PDF가 이상한데?
+
+
+################################################################################################################
+########################################### 최진호 2026-04-02 11:50:44 ###########################################
+################################################################################################################
+#pip install biopython
+
+ 
+
+from Bio import Entrez
+
+from Bio import SeqIO
+
+Entrez.email = "chlwlsgh134@gmail.com“
+
+ 
+
+handle = Entrez.esearch(db="protein", term="Human Papillomavirus L1", retmax=5)
+
+record = Entrez.read(handle)
+
+ids = record["IdList"]
+
+ 
+
+handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
+
+print(handle.read())
+
+ 
+
+handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
+
+records = SeqIO.parse(handle, "gb")
+
+ 
+
+print(">%s\n%s" % (rec.id, rec.seq))
+
+
+################################################################################################################
+########################################### 한여원 2026-04-02 11:43:26 ###########################################
+################################################################################################################
+from Bio import Entrez
+Entrez.email = "yuwon410@gmail.com"
+
 
 # In[ ]:
 
+handle = Entrez.esearch(db="protein", term="Human Papillomavirus L1", retmax=5)
+record = Entrez.read(handle)
+handle.close()
 
-### 2026-03-27 ###
+print(record)
+ids = record["IdList"]
+
+
+# In[ ]:
+
+handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
+genbank_data = handle.read()
+handle.close()
+
+print(genbank_data)
+
+with open("HPV_L1.gb", "w") as f:
+    f.write(genbank_data)
+
+
+# In[ ]:
+
+handle = Entrez.efetch(db="protein", id=ids,
+rettype="fasta", retmode="text")
+fasta_data = handle.read()
+handle.close()
+
+print(fasta_data)
+
+with open("HPV_L1.fasta", "w") as f:
+    f.write(fasta_data)
+
+
+
+
+
+################################################################################################################
+########################################### 김유진 2026-04-02 10:01:59 ###########################################
+################################################################################################################
+#!pip install biopython
 
 from Bio import Entrez
-Entrez.email = "hwangs@kmou.ac.kr"
-
-#https://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi
+Entrez.email = "yu20230867@kmou.ac.kr"
 handle = Entrez.einfo()
 record = handle.read()
 
-
-# In[ ]:
-
-
 print(record)
 
-
-# In[ ]:
-
-
 from Bio import Entrez
-Entrez.email = "hwangs@kmou.ac.kr"
-
-#https://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi
+Entrez.email = "yu20230867@kmou.ac.kr"
 handle = Entrez.einfo()
 record = Entrez.read(handle)
-
-
-# In[ ]:
-
 
 print(record)
 print(len(record["DbList"]))
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
 from Bio import Entrez
-Entrez.email = "hwangs@kmou.ac.kr"
-
-handle = Entrez.esearch(db="pubmed", term="haloferax AND thiN", RetMax=10)
+Entrez.email = "yu20230867@kmou.ac.kr"
+handle = Entrez.esearch(db="pubmed", term="Human Papillomavirus L1", RetMax=5)
 record = Entrez.read(handle)
+
 print(record)
-print(record["Count"]) #https://pubmed.ncbi.nlm.nih.gov/
 
-
-# In[ ]:
+print(record["Count"])
 
 
 from Bio import Entrez
-Entrez.email = "hwangs@kmou.ac.kr"
-
-#https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch
-handle = Entrez.efetch(db="nucleotide", id="NC_002058.3", rettype="gb", retmode="text")
-
-
-# In[ ]:
-
+Entrez.email = "yu20230867@g.kmou.ac.kr"
+handle = Entrez.efetch(db="protein", id="NP_041332.2", rettype="gb", retmode="text")
 
 print(handle.read())
 
-
-# In[ ]:
-
-
 from Bio import Entrez
 from Bio import SeqIO
-Entrez.email = "hwangs@kmou.ac.kr"
-
-#https://www.ncbi.nlm.nih.gov/books/NBK25499/#chapter4.EFetch
-handle = Entrez.efetch(db="nucleotide", id="NC_002058.3", rettype="gb", retmode="text")
+Entrez.email = "yu20230867@g.kmou.ac.kr"
+handle = Entrez.efetch(db="protein", id="NP_041332.2", rettype="gb", retmode="text")
 record = SeqIO.parse(handle, "gb")
 seq_lists = list(record)
-
 handle.close()
 type(seq_lists)
 
 seq_lists[0:4]
 
-
-# In[ ]:
-
-
 seq_rec = seq_lists[0]
 fasta_format = ">%s\n%s\n"%(seq_rec.id, seq_rec.seq)
 
-
-# In[ ]:
-
-
 seq_rec
 
-
-# In[ ]:
-
-
 fasta_format
-
-
-# In[ ]:
-
 
 print(fasta_format)
 
 
+
+
+################################################################################################################
+########################################### 최승빈 2026-04-02 08:01:13 ###########################################
+################################################################################################################
+from Bio import Entrez, SeqIO
+
+Entrez.email = "binseung01@gmail.com“
+
+search_term = '"Human papillomavirus"[Organism] AND L1[Gene]’
+
+with Entrez.esearch(db="protein", term=search_term, retmax=5) as handle:
+search_results = Entrez.read(handle)
+
+id_list = search_results["IdList"]
+
+print("검색된 ID 5개:")
+print(id_list)
+
+with Entrez.efetch(db="protein", id=id_list, rettype="gb", retmode="text") as handle:
+gb_records = list(SeqIO.parse(handle, "genbank"))
+
+SeqIO.write(gb_records, "hpv_l1_5records.gb", "genbank")
+print("GenBank 파일 저장 완료: hpv_l1_5records.gb")
+
+with Entrez.efetch(db="protein", id=id_list, rettype="fasta", retmode="text") as handle:
+fasta_records = list(SeqIO.parse(handle, "fasta"))
+
+SeqIO.write(fasta_records, "hpv_l1_5records.fasta", "fasta")
+print("FASTA 파일 저장 완료: hpv_l1_5records.fasta")
+
+print("\n[GenBank records]")
+for record in gb_records:
+print(record.id, record.description)
+
+print("\n[FASTA records]")
+for record in fasta_records:
+print(record.id, record.description)
+
+
+
+
+################################################################################################################
+########################################### 이지효 2026-04-02 07:00:02 ###########################################
+################################################################################################################
+from Bio import Entrez 
+Entrez.email = "zyo271@gmailcom"
+
+handle = Entrez.esearch( 
+  db="protein",
+  term="Human papillomavirus L1",
+  retmax=5
+)
+record = Entrez.read(handle) 
+handle.close()
+
+print(record)
+
+id_list = record["IdList"] 
+print(id_list)
+
+import time
+
+ids = ",".join(id_list) 
+time.sleep(1)
+
+handle = Entrez.efetch( 
+  db="protein",
+  id=ids, 
+  rettype="gb", 
+  retmode="text"
+)
+
+gb_data = handle.read()
+handle.close()
+
+print(gb_data)
+
+with open("hpv_L1.gb", "w") as f:
+  f.write(gb_data)
+
+
+time.sleep(1)
+
+handle = Entrez.efetch( 
+  db="protein",
+  id=ids, 
+  rettype="fasta", 
+  retmode="text"
+)
+
+fasta_data = handle.read()
+handle.close()
+print(fasta_data)
+with open("hpv_L1.fasta", "w") as f: 
+  f.write(fasta_data)
+
+
+
+
+################################################################################################################
+########################################### 유혜원 2026-04-01 22:01:26 ###########################################
+################################################################################################################
 # In[ ]:
-
-
 from Bio import Entrez
 from Bio import SeqIO
-Entrez.email = "hwangs@kmou.ac.kr"
 
-handle = Entrez.esearch(db="nucleotide", term="thiN", RetMax=3)
+Entrez.email = "yhw3954@gmail.com"
+
+
+# In[ ]:
+handle = Entrez.esearch(
+    db="protein",
+    term="Human papillomavirus[Organism] AND L1",
+    retmax=5
+)
+record = Entrez.read(handle)
+handle.close()
+
+ids = record["IdList"]
+
+print("=== ID List ===")
+print(ids)
+
+
+# In[ ]:
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="gb",
+    retmode="text"
+)
+gb_data = handle.read()
+handle.close()
+
+print("\n=== GenBank Format ===")
+print(gb_data)
+
+
+# In[ ]:
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="fasta",
+    retmode="text"
+)
+fasta_data = handle.read()
+handle.close()
+
+print("\n=== FASTA Format ===")
+print(fasta_data)
+
+
+# In[ ]:
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="gb",
+    retmode="text"
+)
+records = SeqIO.parse(handle, "gb")
+
+print("\n=== FASTA (Parsed) ===")
+for rec in records:
+    print(">%s" % rec.id)
+    print(rec.seq)
+
+
+
+
+################################################################################################################
+########################################### 이도현 2026-04-01 18:20:40 ###########################################
+################################################################################################################
+# In[ ]:
+pip install biopython
+
+# In[ ]:
+from Bio import Entrez
+Entrez.email="dlehgus04@gmail.com"
+
+handle=Entrez.esearch(db="protein", term="Human Papillomavirus AND L1", RetMax=5)
+record=Entrez.read(handle)
+
+print(record)
+print(record["Count"])
+
+# In[ ]:
+print(record["IdList"])
+
+# In[ ]:
+from Bio import Entrez
+Entrez.email="dlehgus04@gmail.com"
+
+ids=record["IdList"]
+
+handle=Entrez.efetch(db="protein", id=ids, rettype="fasta", retmode="text")
+
+# In[ ]:
+print(handle.read())
+
+# In[ ]:
+from Bio import Entrez
+Entrez.email="dlehgus04@gmail.com"
+
+g_handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
+
+# In[ ]:
+print(g_handle.read())
+
+
+
+
+################################################################################################################
+########################################### 윤이정 2026-04-01 14:36:21 ###########################################
+################################################################################################################
+#pip install biopython (재시작하기)
+
+from Bio import Entrez, SeqIO
+
+Entrez.email = "ylj16287@gmail.com"
+
+handle = Entrez.esearch(
+    db="protein",
+    term="Human Papillomavirus L1",
+    retmax=5
+)
+record = Entrez.read(handle)
+ids = record["IdList"]
+
+print("IDs:", ids)
+
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="gb",
+    retmode="text"
+)
+genbank_data = handle.read()
+handle.close()
+
+print("\n=== GenBank format ===\n")
+print(genbank_data)
+
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="fasta",
+    retmode="text"
+)
+fasta_data = handle.read()
+handle.close()
+
+print("\n=== FASTA format ===\n")
+print(fasta_data)
+
+
+
+
+
+################################################################################################################
+########################################### 손혁진 2026-03-31 16:49:33 ###########################################
+################################################################################################################
+#pip install biopython
+
+from Bio import Entrez
+
+from Bio import SeqIO
+
+Entrez.email = "bo3647@daum.net"
+
+handle = Entrez.esearch(db="protein", term = "HPV L1", retmax=5)
+
+record = Entrez.read(handle)
+
+ids = record['IdList']
+
+gb_handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
+
+gb_record = gb_handle.read()
+
+print(gb_record)
+
+
+
+fasta_handle = Entrez.efetch(db="protein", id=ids, rettype="fasta", retmode="text")
+
+fasta_record = gb_handle.read()
+
+print(fasta_record)
+
+
+################################################################################################################
+########################################### 임예지 2026-03-29 23:30:23 ###########################################
+################################################################################################################
+[1] 
+#!pip install biopython
+
+[2]
+from Bio import Entrez
+from Bio import SeqIO
+
+Entrez.email = "dladpwl5223@naver.com"
+
+[3]
+handle = Entrez.einfo()
+record = Entrez.read(handle)
+handle.close()
+
+print(record["DbList"])
+print(len(record["DbList"]))
+
+[4]
+handle = Entrez.esearch(
+    db="protein",
+    term="Human papillomavirus[Organism] AND L1[Gene]",
+    retmax=5
+)
+
+record = Entrez.read(handle)
+handle.close()
+
+print(record)
+print(record["IdList"])
+
+[5]
+ids = record["IdList"]
+
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="gb",
+    retmode="text"
+)
+
+gb_data = handle.read()
+handle.close()
+
+print(gb_data)
+
+[6]
+with open("HPV_L1.gb", "w") as f:
+    f.write(gb_data)
+
+print("GenBank 저장 완료")
+
+[7]
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="fasta",
+    retmode="text"
+)
+
+records = SeqIO.parse(handle, "fasta")
+seq_lists = list(records)
+
+handle.close()
+
+seq_lists
+
+[8]
+for seq_rec in seq_lists:
+    fasta_format = ">%s\n%s\n" % (seq_rec.id, seq_rec.seq)
+    print(fasta_format)
+
+[9]
+with open("HPV_L1.fasta", "w") as f:
+    for seq_rec in seq_lists:
+        fasta_format = ">%s\n%s\n" % (seq_rec.id, seq_rec.seq)
+        f.write(fasta_format)
+
+print("FASTA 저장 완료")
+
+
+################################################################################################################
+########################################### 정서현 2026-03-29 22:45:02 ###########################################
+################################################################################################################
+from Bio import Entrez
+Entrez.email = "blacklu8280@gmail.com"
+
+def fetch_hpv_l1_data():
+search_term = "Human Papillomavirus L1 protein"
+
+print(f"Searching for: {search_term}...")
+
+handle = Entrez.esearch(db="protein", term=search_term, retmax=5)
+record = Entrez.read(handle)
+handle.close()
+
+id_list = record["IdList"]
+    
+if not id_list:
+print("검색 결과가 없습니다.")
+return
+
+formats = ["gb", "fasta"]  
+for fmt in formats:
+print(f"\n--- Fetching in {fmt.upper()} format ---")
+fetch_handle = Entrez.efetch(
+db="protein", 
+id=id_list, 
+rettype=fmt, 
+retmode="text"
+        )
+data = fetch_handle.read()
+fetch_handle.close()
+
+print(data[:500] + "\n... (중략) ...")
+
+with open(f"hpv_l1_records.{fmt}", "w") as f:
+f.write(data)
+
+if __name__ == "__main__":
+    fetch_hpv_l1_data()
+
+
+
+
+################################################################################################################
+########################################### 김아원 2026-03-28 12:28:52 ###########################################
+################################################################################################################
+from Bio import Entrez
+Entrez.email = "aone0420@gmail.com"
+
+handle = Entrez.esearch(db="protein", term="Human Papillomavirus AND L1", RetMax=5)
 record = Entrez.read(handle)
 print(record)
 record['IdList']
 
 ids = record['IdList']
-handle = Entrez.efetch(db="nucleotide", id=ids, rettype="gb", retmode="text")
+handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
+records = handle.read()
+print(records)
+
+################################################################################################################
+########################################### 주상민 2026-03-27 11:49:07 ###########################################
+################################################################################################################
+Entrez.email = "wntkdals0808@gmail.com"
+
+handle = Entrez.esearch(db="protein", term="HPV L1", RetMax=5)
+record = Entrez.read(handle)
+print(record)
+record['IdList']
+
+ids = record['IdList']
+handle = Entrez.efetch(db="protein", id=ids, rettype="gb", retmode="text")
 records = handle.read()
 print(records)
 
 
-# In[ ]:
 
+Entrez.email = "wntkdals0808@gmail.com"
 
+handle = Entrez.esearch(db="protein", term="HPV L1", RetMax=5)
+record = Entrez.read(handle)
+print(record)
+record['IdList']
 
-
-
-# In[ ]:
-
-
-# Assignment
-
-from Bio import Entrez
-Entrez.email ="hwangs@kmou.ac.kr"
-
-handle = Entrez.esearch(db="protein", term="human papillomavirus AND L1", RetMax=5)
-res = Entrez.read(handle)
-handle.close()
-print(res)
-
-res_ids = res['IdList']
-handle_fas = Entrez.efetch(db='protein', id=res_ids, rettype="fasta", retmode='txt')
-L1_fas = handle_fas.read()
-print(L1_fas)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-### 2026-03-20 ###
-
-# Scopus: https://www.scopus.com/
-# pybliometrics: Python library to pull, cache and extract data from the Scopus database.
-#                https://pybliometrics.readthedocs.io/en/stable/index.html
-# pip install pybliometrics
-
-import pybliometrics
-
-
-# In[ ]:
-
-
-# Scopus API generation at https://dev.elsevier.com/
-# Use my API: 810f8e333bce1dee177bcf93d7c79051
-
-pybliometrics.scopus.init()
-
-
-# In[ ]:
-
-
-# Document-specific information
-
-from pybliometrics.scopus import AbstractRetrieval
-
-ab = AbstractRetrieval("10.1128/mbio.00633-22")
-ab.title
-#ab.authors
-
-
-# In[ ]:
-
-
-# Terms for searching / Compare the website version https://www.scopus.com/
-
-from pybliometrics.scopus import ScopusSearch
-
-query = ' TITLE-ABS-KEY ( bioplastic  AND bacteria  OR  archaea  AND technology ) '
-s = ScopusSearch(query,
-                 download = True, # saving the results
-                 verbose = True)  # current process
-
-
-# In[ ]:
-
-
-s
-
-
-# In[ ]:
-
-
-# How many papers?
-
-s.get_results_size()
-
-
-# In[ ]:
-
-
-# Make database from the paper info
-
-import pandas as pd
-
-df_s = pd.DataFrame(s.results)
-
-
-# In[ ]:
-
-
-df_s
-
-
-# In[ ]:
-
-
-# DB check
-
-df_s.head()
-
-
-# In[ ]:
-
-
-df_s.shape
-
-
-# In[ ]:
-
-
-# DB details
-s0 = df_s.loc[37]
-s0
-
-
-# In[ ]:
-
-
-# Data formatting
-
-
-
-
-df_pubyear
-#df_pubyear.shape
-
-
-# In[ ]:
-
-
-df_s["aggregationType"].unique()
-
-
-# In[ ]:
-
-
-df_s["year"] = df_s["coverDate"].apply(lambda x: x.split("-")[0])
-
-
-# In[ ]:
-
-
-df_s["year"] = df_s["year"].astype(int)
-
-
-# In[ ]:
-
-
-df_s["num_pub"] = [1] * df_s.shape[0]
-
-
-# In[ ]:
-
-
-df_pubyear = df_s.query("aggregationType == 'Journal'").groupby("year").sum()
-
-
-# In[ ]:
-
-
-df_pubyear
-
-
-# In[ ]:
-
-
-df_pubyear.to_csv("df_pubyear.csv")
-
-
-# In[ ]:
-
-
-#Plot using DB
-
-import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-
-# Load the dataset
-df_p1 = pd.read_csv("df_pubyear.csv")
-
-# Extract relevant columns and handle missing values
-df_p2 = df_p1[["year", "num_pub"]].dropna()
-
-# Convert to appropriate data types
-df_p2["year"] = df_p2["year"].astype(int)
-df_p2["num_pub"] = df_p2["num_pub"].astype(int)
-
-# Sort by year
-df_p2 = df_p2.sort_values(by="year")
-
-# Plot the data
-plt.figure(figsize=(10, 5))
-plt.plot(df_p2["year"], df_p2["num_pub"], marker="o", linestyle="-")
-plt.xlabel("Year")
-plt.ylabel("Number of Publications")
-plt.title("Number of Publications per Year")
-plt.grid(True)
-plt.show()
-
-
-# In[ ]:
+ids = record['IdList']
+handle = Entrez.efetch(db="protein", id=ids, rettype="fasta", retmode="text")
+records = handle.read()
+print(records)
 
 
 
