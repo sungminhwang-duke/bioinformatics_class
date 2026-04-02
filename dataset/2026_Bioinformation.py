@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
+### 2026-04-03 ###
+
 
 # In[ ]:
 
@@ -11,33 +11,11 @@
 # 다섯 개의 레코드를 GenBank 포맷과 FASTA 포맷으로 가져오는 Biopython 코드를 작성하시오.
 
 
-# In[ ]:
 
 
-# Assignment
-
-from Bio import Entrez
-Entrez.email ="hwangs@kmou.ac.kr"
-
-handle = Entrez.esearch(db="protein", term="human papillomavirus AND L1", RetMax=5)
-res = Entrez.read(handle)
-handle.close()
-print(res)
 
 
 # In[ ]:
-
-
-res_ids = res['IdList']
-handle_fas = Entrez.efetch(db='protein', id=res_ids, rettype="fasta", retmode='txt')
-L1_fas = handle_fas.read()
-print(L1_fas)
-
-
-# In[ ]:
-
-
-### 2026-04-03 ###
 
 class 클래스이름:
     def 메서드이름(self):
@@ -394,12 +372,7 @@ seq3(aa_1)
 
 ### 2026-03-27 ###
 
-# biopython packages
-
-# https://biopython.org/docs/latest/api/Bio.html
-    
-
-
+ 
 # In[ ]:
 
 
@@ -547,20 +520,6 @@ print(records)
 # In[ ]:
 
 
-# Assignment
-
-from Bio import Entrez
-Entrez.email ="hwangs@kmou.ac.kr"
-
-handle = Entrez.esearch(db="protein", term="human papillomavirus AND L1", RetMax=5)
-res = Entrez.read(handle)
-handle.close()
-print(res)
-
-res_ids = res['IdList']
-handle_fas = Entrez.efetch(db='protein', id=res_ids, rettype="fasta", retmode='txt')
-L1_fas = handle_fas.read()
-print(L1_fas)
 
 
 # In[ ]:
