@@ -10,6 +10,18 @@
 # Entez의 E-utilities를 사용하여 NCBI protein 데이터베이스에서 HPV L1 단백질에 대한
 # 다섯 개의 레코드를 GenBank 포맷과 FASTA 포맷으로 가져오는 Biopython 코드를 작성하시오.
 
+from Bio import Entrez
+Entrez.email ="hwangs@kmou.ac.kr"
+
+handle = Entrez.esearch(db="protein", term="human papillomavirus AND L1", RetMax=5)
+res = Entrez.read(handle)
+handle.close()
+print(res)
+
+res_ids = res['IdList']
+handle_fas = Entrez.efetch(db='protein', id=res_ids, rettype="fasta", retmode='txt')
+L1_fas = handle_fas.read()
+print(L1_fas)
 
 
 
