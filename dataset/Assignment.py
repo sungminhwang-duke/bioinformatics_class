@@ -89,7 +89,44 @@ for record in fasta_records:
 ################################################################################################################
 ########################################### 황소연 2026-04-02 13:11:07 ###########################################
 ################################################################################################################
-#PDF가 이상한데?
+from Bio import Entrez
+from Bio import SeqIO
+
+Entrez.email = "fighting0417@naver.com"
+
+
+handle = Entrez.esearch(
+    db="protein",
+    term="Human Papillomavirus L1",
+    retmax=5
+)
+record = Entrez.read(handle)
+handle.close()
+
+ids = record["IdList"]
+
+
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="gb",
+    retmode="text"
+)
+print("=== GenBank Format ===")
+print(handle.read())
+handle.close()
+
+
+handle = Entrez.efetch(
+    db="protein",
+    id=ids,
+    rettype="fasta",
+    retmode="text"
+)
+print("=== FASTA Format ===")
+print(handle.read())
+handle.close()
+
 
 
 ################################################################################################################
@@ -697,11 +734,48 @@ print(records)
 
 
 ################################################################################################################
-########################################### 김다진 0/30점 ###########################################
+########################################### 김다진 <지각제출> 2026-04-02 19:05:31 ##################################
 ################################################################################################################
+from Bio import Entrez
+from Bio import SeqIO
+
+Entrez.email = "kkdajin@g.kmou.ac.kr"
+
+search_term = "human papillomavirus[Organism] AND L1[All Fields]"
+
+with Entrez.esearch(db="protein", term=search_term, retmax=5) as search_handle:
+    search_results = Entrez.read(search_handle)
+
+id_list = search_results["IdList"]
+print(id_list)
+
+with Entrez.efetch(db="protein", id=id_list, rettype="gp", retmode="text") as handle:
+    gb_records = list(SeqIO.parse(handle, "genbank"))
+
+SeqIO.write(gb_records, "hpv_l1_5records.gb", "genbank")
+print("GenBank 파일 저장 완료: hpv_l1_5records.gb")
+
+with Entrez.efetch(db="protein", id=id_list, rettype="fasta", retmode="text") as handle:
+    fasta_records = list(SeqIO.parse(handle, "fasta"))
+
+SeqIO.write(fasta_records, "hpv_l1_5records.fasta", "fasta")
+print("FASTA 파일 저장 완료: hpv_l1_5records.fasta")
+
+################################################################################################################
+########################################### 전주희 <지각제출> 2026-04-03 08:48:50 ##################################
+################################################################################################################
+Entrez.email = "cherry5818@naver.com"  
+Entrez.tool = "HPV_L1_fetcher"
+
+# 1) NCBI protein DB에서 HPV L1 관련 레코드 5개 검색
 
 
-################################################################################################################
-########################################### 전주희 0/30점 ###########################################
-################################################################################################################
+handle = Entrez.esearch(
+    db="protein",
+    term='("human papillomavirus"[Organism] OR HPV[Title]) AND L1[Protein Name]',
+    retmax=5
+)
+search_results = Entrez.read(handle)
+handle.close()
 
+protein_ids = search_results["IdList"]
