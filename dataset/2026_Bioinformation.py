@@ -1,3 +1,160 @@
+### 2026-04-10 ###
+
+#>buccal_swab.unmapped1
+#CTTTTGTTAATCGATGATATACAGTCACTCAGCGGAAAAAAAGTCGCAACTCAGGAAGAATTTTTCAATACCTTTAACGCCCTTCATG
+
+
+#>buccal_swab.unmapped2
+#CCAGCCCCCCAGCCTCCCGATCACGGTTTACTACGCCGTGTTGGAGCGCGCCTGCCGCAGCGTGCTCCTAAACGCACCGTCGGAGGCCCCCCAGATTGTCCGC
+
+
+# In[ ]:
+
+
+from Bio import Entrez
+Entrez.email = "hwangs@kmou.ac.kr"
+
+handle = Entrez.efetch(db="nucleotide", id="CP046379", rettype="gb", retmode="text")
+record = handle.read()
+
+
+# In[ ]:
+
+
+print(record[0:1000])
+
+
+# In[ ]:
+
+
+### 1) with a fasta file
+
+from Bio.Seq import Seq
+from Bio.Blast import NCBIWWW 
+from Bio import SeqIO 
+
+record = SeqIO.read("./Downloads/6-buccal_swab_unmapped1.fasta", format="fasta") 
+handle = NCBIWWW.qblast("blastn", "nt", record.format("fasta")) # https://biopython.org/docs/dev/api/Bio.Blast.NCBIWWW.html
+
+
+# In[ ]:
+
+
+print(handle.read())
+
+
+# In[ ]:
+
+
+### 2) with DNA sequence
+
+from Bio.Seq import Seq
+
+fasta_file = Seq("CTTTTGTTAATCGATGATATACAGTCACTCAGCGGAAAAAAAGTCGCAACTCAGGAAGAATTTTTCAATACCTTTAACGCCCTTCATG")
+
+
+# In[ ]:
+
+
+print(fasta_file)
+
+
+# In[ ]:
+
+
+from Bio.Seq import Seq
+from Bio.Blast import NCBIWWW 
+from Bio import SeqIO 
+
+fasta_file = Seq("CTTTTGTTAATCGATGATATACAGTCACTCAGCGGAAAAAAAGTCGCAACTCAGGAAGAATTTTTCAATACCTTTAACGCCCTTCATG")
+
+handle1 = NCBIWWW.qblast("blastn", "nt", str(fasta_file), format_type="XML") #type 1: XML
+handle2 = NCBIWWW.qblast("blastn", "nt", str(fasta_file), format_type="HTML") #type 2: HTML
+
+
+# In[ ]:
+
+
+# type 1: XML
+
+with open("./Downloads/6-blast_results.xml", "w") as output_file:
+    output_file.write(handle1.read())
+    
+handle1.close()
+
+
+# In[ ]:
+
+
+from Bio import SearchIO
+
+blast_qresult = SearchIO.read('./Downloads/6-blast_results.xml', 'blast-xml')
+print(blast_qresult)
+
+#HSP: high-scoring pair
+
+
+# In[ ]:
+
+
+# type 2: HTML
+
+with open("./Downloads/6-blast_results.HTML", "w") as output_file:
+    output_file.write(handle2.read())
+    
+handle2.close()
+
+
+# In[ ]:
+
+
+print(blast_qresult[0])
+
+# E-value: the number of expected hits of similar quality (score) that could be found just by chance.
+# 값이 작으면 작을수록, 서열 매치가 우연히 발생할 확률이 낮다!
+
+# E = m x n  / 2bit-score         (https://www.metagenomics.wiki/tools/blast/evalue)
+# m: query sequence length       (https://bio-kcs.tistory.com/entry/BLAST-BLAST-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98%EC%97%90-%EB%8C%80%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90)
+# n: total database length (sum of all sequences)
+# bit-score: a normalized score derived from the raw alignment score (S) using the scoring system
+# BLAST의 Raw Score(S)를 정규화한 값. Raw Score(S)는 비교하는 서열의 길이와 치환행렬(BLOSUM)에 따라 달라지는데, 이를 보정하기 위해 Bit Score (S')가 사용됨
+
+
+# In[ ]:
+
+
+### 3) with amino acid sequence
+
+from Bio import SeqIO, SearchIO
+from Bio.Blast import NCBIWWW
+from Bio.Seq import Seq
+
+fasta_file = Seq("MKFIEEIVVDAFLPTFRALLAEDLRDRGFTQSEVAEALGISQSAVSKYAHGEVATNERVATDPRVVDLVSRVGDGLATGDMTPVQALVEAEVLIRQLEEGDLLSDLHEDEMPELASHDGFRSIHDPEGRLRTVEQVRSSVRRGLRMLTNTSGFAGLIPNVGSNLVESLPDADSVDDVAAIPGRIFDVKGQATVPGEPEFGVSGHVAGVLLSARAAGADVNAALNIVYDAGVIEDLEAAGYECIEFDPDAPTDPVRELLTARDLPETFVVYQSGGYGIEPITYILGPDAPAVADVVRVLL")
+
+#handle = NCBIWWW.qblast("blastn", "nt", str(fasta_file), format_type="XML")  # for DNA sequence
+handle_p = NCBIWWW.qblast("blastp", "nr", str(fasta_file), format_type="XML") # database= nr (non-redundant), swissprot, refseq_protein
+
+
+
+# In[ ]:
+
+
+with open("./Downloads/6-blastp_results.xml", "w") as output_file:
+    output_file.write(handle_p.read())
+    
+handle_p.close()
+print("BLASTp is completed and the result is saved as 'blastp_results.xml'! ")
+
+blastp_qresult = SearchIO.read('./Downloads/6-blastp_results.xml', 'blast-xml')
+print(blastp_qresult)
+print(blastp_qresult[0])
+
+
+# In[ ]:
+
+
+
+
 ### 2026-04-03 ###
 
 
