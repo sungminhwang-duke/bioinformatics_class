@@ -1,3 +1,167 @@
+### 2026-04-17 ###
+
+# In[ ]:
+
+# 1) MUSCLE can be operated by biopython! First, download the package: https://www.drive5.com/muscle/
+
+from Bio.Align.Applications import MuscleCommandline 
+
+muscle_exe = "./Downloads/muscle-win64.v5.3"  
+cmd_line = MuscleCommandline(muscle_exe, input="7-MSA.fasta", out="7-MSA.aln", clw=" ") 
+print(cmd_line) 
+
+
+# In[ ]:
+
+
+# 2-1) online MUSCLE: https://www.ebi.ac.uk/jdispatcher/
+# 2-2) read by biopython!
+
+from Bio import AlignIO 
+
+alignment = AlignIO.read("./Downloads/7-MSA.aln","clustal") 
+print(alignment) 
+
+
+# In[ ]:
+
+
+#separate the ID info and seuquence
+
+from Bio import AlignIO 
+
+alignment = AlignIO.read("./Downloads/7-MSA.aln","clustal") 
+for record in alignment: 
+    print("%s - %s" % (record.seq, record.id))
+
+
+# In[ ]:
+
+
+from Bio import AlignIO 
+
+alignment = AlignIO.read("./Downloads/7-MSA.aln","clustal") 
+for record in alignment: 
+    print("%s - %s" % (record.seq[0:10], record.id))
+
+
+# In[ ]:
+
+
+# weblogo - 1) online: https://weblogo.threeplusone.com/
+
+
+# In[ ]:
+
+
+# weblogo - 2-1) biopython with generating sequence
+
+from Bio.motifs import Motif 
+from Bio import motifs 
+from Bio.Seq import Seq 
+from IPython.display import Image
+
+
+seqs = [Seq("TACAA"), 
+        Seq("TACGC"), 
+        Seq("TACAC"), 
+        Seq("TACCC"), 
+        Seq("AACCC"), 
+        Seq("AATGC"), 
+        Seq("AATGC"), 
+        ]
+
+m = motifs.create(seqs) 
+print(m.counts)
+Motif.weblogo(m,'./Downloads/7-weblogo.png') # for saving
+
+Image("./Downloads/7-weblogo.png")
+
+
+# In[ ]:
+
+
+# weblogo - 2-2) biopython with the aligned file
+
+from Bio import AlignIO, motifs
+from Bio.motifs import Motif
+from Bio.Seq import Seq 
+
+alignment = AlignIO.read("./Downloads/7-MSA.aln","clustal") 
+instance = [] 
+for record in alignment: 
+    s = Seq(str(record.seq)) 
+    instance.append(s) 
+m = motifs.create(instance) 
+
+Motif.weblogo(m,'./Downloads/7-weblogo.png') # for saving
+Image("./Downloads/7-weblogo.png")
+
+
+# In[ ]:
+
+
+import pandas as pd
+import logomaker
+import matplotlib.pyplot as plt
+from Bio import AlignIO
+
+alignment = AlignIO.read("./Downloads/7-MSA.aln", "clustal")
+seqs = [str(record.seq) for record in alignment]
+
+df = pd.DataFrame([list(seq) for seq in seqs])
+aa = list("ACDEFGHIKLMNPQRSTVWY")
+counts_df = pd.DataFrame(0, index=aa, columns=range(df.shape[1]))
+
+for col in df.columns:
+    for aa_letter in df[col]:
+        if aa_letter in counts_df.index:
+            counts_df.loc[aa_letter, col] += 1
+
+logo_df = counts_df.T
+logomaker.Logo(logo_df, shade_below=.5, fade_below=.5)
+#plt.title("WebLogo: Protein MSA")
+#plt.tight_layout()
+#plt.savefig("./Downloads/HBA_weblogo_logomaker.png", dpi=300)
+#plt.show()
+
+
+# In[ ]:
+
+
+import pandas as pd
+import logomaker
+from Bio import AlignIO
+
+alignment = AlignIO.read("./Downloads/7-MSA.aln", "clustal")
+seqs = [str(record.seq) for record in alignment]
+
+df = pd.DataFrame([list(seq) for seq in seqs])
+aa = list("ACDEFGHIKLMNPQRSTVWY")
+counts_df = pd.DataFrame(0, index=aa, columns=range(df.shape[1]))
+
+for col in df.columns:
+    for aa_letter in df[col]:
+        if aa_letter in counts_df.index:
+            counts_df.loc[aa_letter, col] += 1
+
+logo_df = counts_df.T
+
+
+# In[ ]:
+
+
+counts_df
+df
+seqs
+logo_df
+
+
+
+
+
+
+
 ### 2026-04-10 ###
 
 #>buccal_swab.unmapped1
