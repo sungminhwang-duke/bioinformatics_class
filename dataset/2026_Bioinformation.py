@@ -1,3 +1,80 @@
+### 2026-05-08 ###
+
+# In[ ]:
+# Read newick format
+
+from Bio import Phylo
+
+tree = Phylo.read("./Downloads/9-sample_tree3.nwk","newick")
+print(type(tree))
+print(tree)
+
+
+# In[ ]:
+
+
+# Draw a tree
+
+from Bio import Phylo
+
+tree = Phylo.read("./Downloads/9-sample_tree1.nwk","newick") # (A, B, C);
+tree = Phylo.read("./Downloads/9-sample_tree2.nwk","newick") # (A:0.1, B:0.3, C:0.2);
+tree = Phylo.read("./Downloads/9-sample_tree3.nwk","newick") # (A, B, (C, D));
+
+Phylo.draw(tree)
+
+
+# In[ ]:
+
+
+# Draw a color tree
+
+from Bio import Phylo
+
+tree = Phylo.read("./Downloads/9-sample_tree3.nwk","newick")
+
+tree.rooted = True
+tree.root.color = (128,128,128)
+print(tree)
+print("tree.clade[0]:", tree.clade[1])
+print("tree.clade[1]:", tree.clade[1])
+print("tree.clade[2,0]:", tree.clade[2,0])
+print("tree.clade[2,1]:", tree.clade[2,1])
+tree.clade[1].color = "blue"
+tree.clade[2,0].color = "red"
+Phylo.draw(tree)
+
+
+# In[ ]:
+
+
+# Draw a tree with length
+
+from Bio import Phylo
+
+tree = Phylo.read("./Downloads/9-sample_tree4.nwk","newick")
+Phylo.draw(tree)
+
+
+# In[ ]:
+
+
+# Draw a tree with length showed
+
+from Bio import Phylo
+
+tree = Phylo.read("./Downloads/9-sample_tree4.nwk","newick")
+Phylo.draw(tree, branch_labels = lambda c: c.branch_length)
+
+
+# In[ ]:
+
+
+
+
+
+
+
 ### 2026-04-17 ###
 
 # In[ ]:
