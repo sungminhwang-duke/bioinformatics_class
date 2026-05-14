@@ -1,3 +1,208 @@
+### 2026-05-15 ###
+
+
+# In[1]:
+
+
+# 1) 질의어를 입력받아 UniProtKB DB에서 검색하는 함수 정의
+# https://www.uniprot.org/
+
+import requests
+import json
+
+def search_uniprot(query):
+    url = "https://rest.uniprot.org/uniprotkb/search" 
+
+    params = {'query': query,          # 질의어
+              'format': 'json',        # 데이터 반환형식
+              'fields': 'accession',   # 검색 대상 (예, accession number)
+              'size': 10}              # 최대 검색 개수
+    
+    response = requests.get(url, params = params)
+    
+    if response.status_code == 200:    # https://incodom.kr/Status_code
+        return response.json()
+    else:
+        print(f"Error: {response.status_code}")
+        return None
+
+
+# In[6]:
+
+
+dic_acc = search_uniprot("P53 human")
+
+
+# In[ ]:
+
+
+dic_acc
+
+
+# In[ ]:
+
+
+list_acc = dic_acc['results']
+
+accession = []
+for acc in list_acc:
+    accession.append(acc['primaryAccession'])
+
+
+# In[ ]:
+
+
+list_acc
+accession
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+# 2) PROSITE (functional domain, motif) DB에서 검색
+# PS로 시작하는 등록번호
+# https://prosite.expasy.org/
+
+import requests
+from Bio import SeqIO
+from io import StringIO
+
+# (1) UniProt에서 단백질 서열 가져오기 함수
+def get_uniprot_sequence(protein_id):
+    uniprot_url = f"https://www.uniprot.org/uniprot/{protein_id}.fasta"
+    response = requests.get(uniprot_url)
+    
+    if response.status_code == 200:
+        fasta_data = response.text
+        seq_record = SeqIO.read(StringIO(fasta_data), "fasta")
+        return str(seq_record.seq)
+    
+    
+# (2) PROSITE에서 domain 검색하는 함수
+def search_prosite(sequence):
+    prosite_scan_url = "https://prosite.expasy.org/cgi-bin/prosite/PSScan.cgi"
+    params = {"seq": sequence,
+              "output": "json"}
+    response = requests.post(prosite_scan_url, data=params)
+    
+    if response.status_code == 200:
+        result = response.json()
+        domains = []
+        
+        if "matchset" in result:
+            for match in result["matchset"]:
+                domains.append({
+                    "Prosite ID": match["signature_ac"],
+                    "start": match["start"],
+                    "stop": match["stop"]
+                })
+            return domains
+
+
+# In[ ]:
+
+
+protein_id = "Q496J9"
+sequence = get_uniprot_sequence(protein_id)
+domains = search_prosite(sequence)
+domains
+
+
+# In[ ]:
+
+
+# PROSITE에서 세부 서열패턴 확인-1
+from Bio import ExPASy
+from Bio.ExPASy import Prosite
+
+handle = ExPASy.get_prosite_raw('PS00217')
+record = Prosite.read(handle)
+handle.close()
+
+print(record.pattern)
+
+
+# In[ ]:
+
+
+# PROSITE에서 세부 서열패턴 확인-2
+in_handle = ExPASy.get_prodoc_entry('PDOC00217')
+html = in_handle.read()
+in_handle.close()
+with open("./Downloads/prodocrecord.html", "w") as out_handle:
+    out_handle.write(html)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+# 3) 질의어를 입력받아 STRING DB에서 검색하는 함수
+# https://string-db.org/
+import requests
+
+def get_string_id(uniprot_id):
+    url = "https://string-db.org/api/json/get_string_ids"
+    params = {"identifiers": uniprot_id,
+             "species": 9606} #NCBI taxonomy ID of human
+    response = requests.get(url, params=params)
+    
+    if response.status_code == 200:
+        data = response.json()
+        if data:
+            string_id = data[0]['stringId']
+            return string_id
+
+
+# In[ ]:
+
+
+uniprot_id = "P69905"
+string_id = get_string_id(uniprot_id)
+print(f"STRING ID for {uniprot_id}: {string_id}")
+
+
+# In[ ]:
+
+
+# STRING에서 단백질의 네트워크 이미지 확인 함수
+import requests
+
+#string_id = "9606.ENSP00000251595"
+url = f"https://string-db.org/api/image/network?identifiers={string_id}"
+print(f"STRING ID for {uniprot_id}: {string_id}")
+
+response = requests.get(url)
+if response.status_code == 200:
+    with open("./Downloads/network.png", "wb") as file:
+        file.write(response.content)
+    print(f"Image was created.")
+
+
+# In[ ]:
+
+
+
+#문제 1: “DNA polymerase E. coli”를 검색하여 accession number 5개 출력해 보세요.
+
+#문제 2: 아래 UniProt ID를 이용하여 STRING ID 및 단백질 네트워크 이미지를 확인해 보세요.
+        TP53 (P04637), EGFR (P00533), BRCA1 (P38398)
+
+
+
+
+
 ### 2026-05-08 ###
 
 # In[ ]:
