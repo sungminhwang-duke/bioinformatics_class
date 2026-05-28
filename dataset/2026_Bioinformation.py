@@ -1,3 +1,185 @@
+### 2026-05-29 ###
+
+# check methods such as kegg_info, ...
+
+from Bio.KEGG import REST
+dir(REST) 
+
+
+# In[ ]:
+
+
+from Bio.KEGG import REST
+
+kegg = REST.kegg_info('kegg')
+print(kegg.read())
+
+
+# In[ ]:
+
+
+# check pathway information
+# https://rest.kegg.jp/info/pathway
+from Bio.KEGG import REST
+
+info = REST.kegg_info('pathway')
+print(info.read())
+
+
+# In[ ]:
+
+
+# check 'human' pathway information
+from Bio.KEGG import REST
+
+hsa_pathways = REST.kegg_list("pathway", "hsa")
+print(hsa_pathways.read())
+
+
+# In[ ]:
+
+
+# check 'human' pathway information and count how many pathways in human from KEGG DB
+from Bio.KEGG import REST
+
+hsa_pathways = REST.kegg_list("pathway", "hsa")
+hsa_pathways_text = hsa_pathways.read()  # Call read only ONCE
+
+# Now count
+pathway_list = hsa_pathways_text.strip().split("\n")
+print(f"Number of pathways: {len(pathway_list)}")
+
+
+# In[ ]:
+
+
+# check the specific pathway
+from Bio.KEGG import REST
+
+entry = REST.kegg_get('hsa00020')
+print(entry.read())
+
+
+# In[ ]:
+
+
+# pathway image generation
+from Bio.KEGG import REST
+from IPython.display import Image
+
+img = REST.kegg_get('hsa00020', 'image')
+Image(img.read())
+
+
+# In[ ]:
+
+
+# Find query in KEGG
+
+from Bio.KEGG import REST
+
+Pd = REST.kegg_find("pathway", "Parkinson+disease")
+print(Pd.read())
+
+
+# In[ ]:
+
+
+# Map image
+
+from Bio.KEGG import REST
+from IPython.display import Image
+
+refPD = REST.kegg_get('map05012', 'image')
+Image(refPD.read())
+
+
+# In[ ]:
+
+
+# Map image
+
+from Bio.KEGG import REST
+from IPython.display import Image
+
+humanPD = REST.kegg_get('hsa05012', 'image')
+Image(humanPD.read())
+
+
+# In[ ]:
+
+
+# Find query (drug for Parkinson) in KEGG
+
+from Bio.KEGG import REST
+
+Pd_drug = REST.kegg_find("pathway", "antiparkinson+agents")
+print(Pd_drug.read())
+
+
+# In[ ]:
+
+
+from Bio.KEGG import REST
+
+Pd_drug_check = REST.kegg_get('map07057')
+print(Pd_drug_check.read())
+
+
+# In[ ]:
+
+
+from Bio.KEGG import REST
+
+dopa = REST.kegg_get('D00059')
+print(dopa.read())
+
+
+# In[ ]:
+
+
+# Chemical image
+
+from Bio.KEGG import REST
+from IPython.display import Image
+
+dopa_chem = REST.kegg_get('map07057', 'image')
+Image(dopa_chem.read())
+
+
+# In[ ]:
+
+
+# Chemical image
+
+from Bio.KEGG import REST
+from IPython.display import Image
+
+dopa_chem_specific = REST.kegg_get('D00059', 'image')
+Image(dopa_chem_specific.read())
+
+
+# In[ ]:
+
+
+# 연습문제
+# Biopython을 사용하여 질병(disease)인 용혈성 요독 증후군 (hemolytic uremic syndrome)에 대한 다음 정보를 확인하시오!
+#1) Entry 번호
+#2) Pathway 번호
+
+
+
+
+
+
+### 2026-05-22 ###
+
+# 단백질 3차 구조 및 PDB 데이터 처리
+
+
+
+
+
 ### 2026-05-15 ###
 
 
