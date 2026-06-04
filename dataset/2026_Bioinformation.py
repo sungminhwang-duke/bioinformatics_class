@@ -1,8 +1,278 @@
 ### 2026-06-05 ###
 
+# 데이터 전처리: 데이터 클리닝 - 결측치 처리, 틀린값 처리, 이상치 처리 등
 
 
+# In[ ]:
 
+
+#pip install numpy pandas matplotlib scikit-learn
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+
+
+# In[ ]:
+
+
+# 데이터 생성: 임의의 키, 몸무게 데이터 생성, 100명의 평균 170cm, 65kg, 표준편차 4cm, 5kg
+
+N = 100
+height = 4*np.random.randn(N).round(2) + 170
+weight = 5*np.random.randn(N).round(2) + 65
+df = pd.DataFrame({"height": height, "weight": weight})
+df[:5]
+
+
+# In[ ]:
+
+
+# 임의로 결측치 삽입
+# np.nan는 결측치를 나타내는 것임 (not a number)
+
+df['height'][2] = np.nan
+df['weight'][3] = np.nan
+df[:5]
+
+
+# In[ ]:
+
+
+# 데이터 클리닝
+#결측치 처리: 결측치를 처리하는 방법 세 가지
+# 1) 결측치가 포함된 샘플(행)을 버린다
+# 2) 결측치를 적절한 값으로 대체한다
+# 3) 결측치 처리를 다음 분석 단계로 넘긴다. 즉, 결측치를 그대로 둔다
+
+# 결측치 확인은 np.isnull() 사용
+# 결측치 치환은 np.fillna() 사용
+
+
+# In[ ]:
+
+
+## 컬럼별 결측치 총 개수 보기
+
+df.isnull().sum()
+
+
+# In[ ]:
+
+
+## 결측치가 하나라도 있는 행(샘플) 삭제하기
+
+df2 = df.dropna()
+print(df2.shape)
+df2[:5]
+
+
+# In[ ]:
+
+
+## 결측치 대체하기 (키는 170으로 몸무게는 평균치로 대체)
+# inplace=True는 실행결과를 원본 데이터에 즉시 반영하라는 뜻임
+
+df3 = df.copy()
+df3['height'].fillna(170, inplace=True)
+df3['weight'].fillna(df3['weight'].mean(), inplace=True)
+print(df3.shape)
+df3[:5]
+
+
+# In[ ]:
+
+
+###### 데이터 전처리 실습 ###### 
+
+# 예) 타이타닉 생존자 예측 문제 데이터의 전처리
+# https://raw.githubusercontent.com/StillWork/data/master/titanic_train.csv
+
+data = pd.read_csv("https://raw.githubusercontent.com/StillWork/data/master/titanic_train.csv")
+print(data.shape)
+data[:3]
+
+
+# In[ ]:
+
+
+# 예상 답
+df = data.copy() # 사본 사용
+df.isnull().sum()
+
+## 결측치가 하나라도 있는 행(샘플) 삭제하기
+
+df2 = df.dropna()
+print(df2.shape)
+df2[:5]
+
+
+# In[ ]:
+
+
+###### 머신러닝 코드 실습 - 유방암 분류 ######       # https://blog.naver.com/snova84/223327390487
+
+# 암 진단이 양성인지 악성인지 여러 관찰/특징에 기초하여 예측 
+
+# 30가지 기능이 사용되며, 예:
+#        - 반지름(둘레의 중심에서 점까지의 거리 mean)
+#        - 텍스처(회색 스케일 값의 표준 편차)
+#        - 둘레의 면적
+#        - 평활도(반지름 길이의 국부적 변화)
+#        - 콤팩트성 (perimeter^2 / 면적 - 1.0)
+#        - 오목한 부분(윤곽의 오목한 부분의 severity)
+#        - 오목한 점(윤곽의 오목한 부분의 수)
+#        - 대칭성 
+#        - 프랙탈 차원("coastline 근사" - 1)
+
+# 데이터 셋은 30개의 모든 입력 기능을 사용하여 선형적으로 분리 가능
+# 인스턴스 수: 569개 (212 악성, 357 양성)
+
+
+# In[1]:
+
+
+# 라이브러리 불러오기
+
+import pandas as pd              
+import numpy as np           
+import matplotlib.pyplot as plt  
+import seaborn as sns           
+# %matplotlib inline
+
+
+# In[2]:
+
+
+# sklearn library에서 데이터셋 불러오기
+
+from sklearn.datasets import load_breast_cancer
+
+cancer = load_breast_cancer()
+cancer
+
+#sklearn datasets: data, target, feature_names, DESCR, etc
+
+
+# In[ ]:
+
+
+print(cancer['feature_names'])
+
+
+# In[ ]:
+
+
+#target 확인
+print(cancer['target_names'])
+print(cancer['target'])
+
+
+# In[4]:
+
+
+#데이터프레임화
+df_cancer = pd.DataFrame(np.c_[cancer['data'], cancer['target']], columns = np.append(cancer['feature_names'], ['target']))
+df_cancer.head()
+
+
+# In[ ]:
+
+
+#시각화
+
+sns.pairplot(df_cancer, hue = 'target', vars = ['mean radius', 'mean texture', 'mean area', 'mean perimeter', 'mean smoothness'] )
+
+
+# In[ ]:
+
+
+#변수들의 관계 중에서 2개로 분류하기 가장 좋을 것 같은 것을 선택: mean area vs mean smoothness
+
+sns.scatterplot(x = 'mean area', y = 'mean smoothness', hue = 'target', data = df_cancer)
+
+
+# In[13]:
+
+
+# Model training - x에 특징 값 넣어주는데, target 값을 지우고 넣어줌. y에는 target 값 넣어줌.
+X = df_cancer.drop(['target'],axis=1)
+y = df_cancer['target']
+
+
+# In[14]:
+
+
+y.head()
+y.tail()
+
+
+# In[15]:
+
+
+# Model training - 데이터를 train data와 test data로 나눠주는데,
+#                   sklearn의 train_test_split 매서드를 활용!
+#                   test_size를 통해서 8:2로 분류. 568개의 80%
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.20, random_state=5)
+
+
+# In[20]:
+
+
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+
+
+# In[22]:
+
+
+# Model training - 데이터셋을 분류했으니, 사용할 모델을 적용.
+#                  예, SVM의 classification (SVC model)
+
+from sklearn.svm import SVC 
+from sklearn.metrics import classification_report, confusion_matrix
+
+svc_model = SVC()
+svc_model.fit(X_train, y_train)
+
+
+# In[31]:
+
+
+# 결과 분석
+y_predict = svc_model.predict(X_test)
+
+report = classification_report(y_test, y_predict, output_dict=True)
+report_df = pd.DataFrame(report).transpose()
+display(report_df.round(2))
+
+#Precision(정밀도): 예측한 클래스 중 실제로 해당 클래스인 데이터의 비율
+#Recall(재현율): 실제 클래스 중 예측한 클래스와 일치한 데이터의 비율
+#F1-score: Precision과 Recall의 조화평균 (높으면 높을수록 좋음!)
+#Support: 각 클래스의 실제 데이터 수
+#Accuracy(정확도): 모델의 정확도
+#macro avg는 각 클래스별로 동일한 비중을 둔 평균을 구하기 때문에, 클래스별 데이터 수의 영향을 받지 않음
+#weighted avg는 클래스의 데이터 수를 고려하여 평균 구하기 때문에, 클래스별 데이터 수가 다른 경우에는 weighted avg가 더 의미있는 평가 지표가 될 수 있음
+
+
+cm = confusion_matrix(y_test, y_predict)
+print(cm)
+
+#                       Predicted Negative(0)   Predicted Positive(1)
+#                       -------------------     -------------------
+# Actual Negative (0) |  True Negative (TN),    False Positive (FP)
+# Actual Positive (1) | False Negative (FN),     True Positive (TP)
+#
+#
+# https://manisha-sirsat.blogspot.com/2019/04/confusion-matrix.html
+
+
+# In[ ]:
 
 
 
